@@ -21,6 +21,7 @@ This repository holds design only, with no implementation. Each layer has one so
 - [Access rules](#access-rules)
 - [Errors](#errors)
 - [Open items](#open-items)
+- [Related repositories](#related-repositories)
 - [Related material](#related-material)
 - [Contributing](#contributing)
 
@@ -31,6 +32,7 @@ This repository holds design only, with no implementation. Each layer has one so
 ```
 .
 ├── README.md              this overview
+├── CLAUDE.md              guidance for Claude Code, including the rule for changes to the other repos
 ├── API-Design.md          API: the specification (source of truth)
 ├── REQUIREMENTS.md        API: every requirement from the design and the Spring implementation, with IDs
 ├── DB-Design.md           DB: schema changes for the UI and API (triggers, functions, views, migration order)
@@ -54,6 +56,7 @@ This repository holds design only, with no implementation. Each layer has one so
 | [ui/Design-System.md](ui/Design-System.md) | Color and type tokens for both visual proposals, components and their states, motion, copy guidelines. |
 | [ui/mockups/index.html](ui/mockups/index.html) | Self-contained clickable mockups. Open the file in a browser; no build or install. |
 | [README.md](README.md) | This overview. |
+| [CLAUDE.md](CLAUDE.md) | Guidance for Claude Code working in this repo, including the rule for changes that affect the database or API repositories. |
 
 ---
 
@@ -68,8 +71,8 @@ flowchart LR
 | Layer | Designed in | Implemented in |
 |---|---|---|
 | Web UI | [UI-Design.md](UI-Design.md) and [ui/](ui/) | Not yet. It will be built in React. |
-| REST API | [API-Design.md](API-Design.md), [REQUIREMENTS.md](REQUIREMENTS.md) | `api-spring-music` (Spring Boot) |
-| Database | `data-model.md` in the database project; proposed changes in [DB-Design.md](DB-Design.md) | `db-postgresql-music` (the DB-Design.md changes aren't applied yet) |
+| REST API | [API-Design.md](API-Design.md), [REQUIREMENTS.md](REQUIREMENTS.md) | [restapi-spring-music](https://github.com/oggmont/restapi-spring-music) (Spring Boot) |
+| Database | `data-model.md` in the database project; proposed changes in [DB-Design.md](DB-Design.md) | [db-postgresql-music](https://github.com/oggmont/db-postgresql-music) (the DB-Design.md changes aren't applied yet) |
 
 ---
 
@@ -197,6 +200,24 @@ The full table is in [Mapping database errors to HTTP](API-Design.md#mapping-dat
 
 ---
 
+## Related repositories
+
+This repository is the design. The database and the REST API are implemented in two other repositories:
+
+| Layer | Repository | Local clone (next to this repo) | What it owns |
+|---|---|---|---|
+| Database | [oggmont/db-postgresql-music](https://github.com/oggmont/db-postgresql-music) | `../db-postgresql-music` | The PostgreSQL schema, views, functions, triggers and seed data. |
+| REST API | [oggmont/restapi-spring-music](https://github.com/oggmont/restapi-spring-music) | `../api-spring-music` | The Spring Boot implementation of [API-Design.md](API-Design.md), and its own `auth` schema. |
+
+**How design changes reach them:**
+- When a design change here affects the database or the API, it comes with a **proposed change written in this repo**, where applicable:
+  - for the database, a DB-xx section in [DB-Design.md](DB-Design.md);
+  - for the API, the contract in [API-Design.md](API-Design.md), plus a note in [REQUIREMENTS.md](REQUIREMENTS.md) where the implementation will differ until it's updated.
+- The other repositories are **not changed as part of a design change**; it's usually better to leave them alone. They are updated from these proposals later, on purpose.
+- Any change in those repositories (edits, migrations, commits, pull requests) needs the owner's **permission first**, each time.
+
+---
+
 ## Related material
 
 The spec refers to files from the **music-db** database project. They are not in this repository:
@@ -215,5 +236,5 @@ Keep those links working by viewing this repository next to the database project
 2. A UI change that needs something new from the API goes in the UI's [API changes the UI needs](UI-Design.md#api-changes-the-ui-needs) table first, then into API-Design.md once it's agreed.
 3. Keep the mockups ([ui/mockups/index.html](ui/mockups/index.html)) and the tokens in [ui/Design-System.md](ui/Design-System.md) in step with the screen specs.
 4. Update this README only if the change affects the overview (a new resource group, a new screen, a new convention, a new open item).
-5. A change that needs the database goes in [DB-Design.md](DB-Design.md) as a new DB-xx section with its SQL, undo and check, and API-Design.md links to it instead of repeating the SQL.
+5. A change that needs the database goes in [DB-Design.md](DB-Design.md) as a new DB-xx section with its SQL, undo and check, and API-Design.md links to it instead of repeating the SQL. Don't change the [database or API repositories](#related-repositories) directly; ask the owner first.
 6. Keep examples based on the real seed data, so they can be checked with `make psql`.
