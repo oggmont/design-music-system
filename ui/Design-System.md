@@ -22,7 +22,7 @@ Two visual proposals share **one component set** and differ only in tokens and l
 ## Principles
 
 1. **Covers and names first.** The playlist is the hero object. Its cover and name are always the most visible thing on a card or page.
-2. **Show the limit before it bites.** Every limit (5 favorites, 100 songs, 20 playlists) shows as a count before you reach it, and reaching it offers a way forward.
+2. **Show the limit before it bites.** Every limit (5 favorites, 20 songs, 20 playlists) shows as a count before you reach it, and reaching it offers a way forward.
 3. **Two taps to collect.** Adding a song never takes more than *Add → playlist*.
 4. **Undo over confirm.** Small, reversible actions (add, remove a song, unfavorite) happen at once and offer Undo. Only deleting a playlist asks first.
 5. **Calm by default.** Color marks state (favorited, full, error) and the one main action on a screen, not decoration.
@@ -117,8 +117,8 @@ Every interactive component lists its states. *All* of them also have **focus** 
 | **Playlist card** | Cover (square), name (2 lines max), meta line ("by Diego Ramos · 12 songs"), optional heart over the cover's corner. The whole card is one link; the heart is a separate button. | default · hover (cover lifts 2 px) · loading placeholder. |
 | **Empty favorite slot** | Dashed square the size of a cover, "+" and "Find a playlist". | Only on your own Home and profile. Links to Discover. |
 | **Song row** | Position or number, title, artist · album, duration, action (Add, or ⋯ for the owner on S7). | default · hover (`--c-surface-2`) · just added (a brief `--c-ok` check). On a phone: two lines, the album is hidden. |
-| **Add menu** | Title "Add to playlist", group "LAST USED" (one item), group "ALL PLAYLISTS (A–Z)", divider, "+ New playlist". Optional filter field with 8+ playlists. Each item: small cover, name, count "n/100" or status. | item: default · hover/active · full (disabled, "Full") · contains (disabled, "✓ Added"). The whole menu: no playlists ("You don't have a playlist yet"). A bottom sheet on phones. |
-| **Count / meter** | "3 of 5", "7 / 100", "9 of 20" in `--t-small`, `tabular-nums`. The 100-song version also has a thin bar. | normal · near the limit (≥ 90%, `--c-text` and bold) · at the limit (says "Full" or "Limit reached"). |
+| **Add menu** | Title "Add to playlist", group "LAST USED" (one item), group "ALL PLAYLISTS (A–Z)", divider, "+ New playlist". Optional filter field with 8+ playlists. Each item: small cover, name, count "n/20" or status. | item: default · hover/active · full (disabled, "Full") · contains (disabled, "✓ Added"). The whole menu: no playlists ("You don't have a playlist yet"). A bottom sheet on phones. |
+| **Count / meter** | "3 of 5", "7 / 20", "9 of 20" in `--t-small`, `tabular-nums`. The 20-song version also has a thin bar. | normal · near the limit (≥ 90%, `--c-text` and bold) · at the limit (says "Full" or "Limit reached"). |
 | **Dialog** | Title, body, actions on the right (Cancel, then the primary). ✕ in the corner. | Opens with focus on the first field, or on the primary when there's no field. Esc closes it. Full screen on phones. Variants: create playlist, edit details (same form, filled in, "Save"), replace a favorite, last favorite, delete. |
 | **Toast** | Icon, message, at most one action. | info · success · error. 5 s, paused while hovered or focused. `role="status"`. |
 | **Avatar** | Image or initials on a color made from the username. Sizes 32 (header), 40 (owner line), 128 (profile). | image · initials. |
@@ -147,7 +147,7 @@ Every interactive component lists its states. *All* of them also have **focus** 
 
 - **Use the person's words.** "Song", "favorite", "playlist", "your profile". Never "track", "follow", "entity" or an error code.
 - **Buttons say what happens.** "Create", "Add", "Replace", "Delete playlist". The toast then says what happened: "Created", "Added to Road Trip".
-- **Errors say what went wrong and how to fix it,** without apology: "Road Trip is full (100 songs). Remove a song or pick another playlist."
+- **Errors say what went wrong and how to fix it,** without apology: "Road Trip is full (20 songs). Remove a song or pick another playlist."
 - **Limits are stated as facts with a way forward:** "You have 20 playlists, the most allowed. Delete one to make a new one."
 - **Owners:** "by Ana García", or "by you" for your own.
 - **Public and private:** always say what it means for people: "Public · on your profile", "Private · only you", "Favorite it to make it public."

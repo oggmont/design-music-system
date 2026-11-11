@@ -33,7 +33,7 @@ The web UI ([UI-Design.md](UI-Design.md)) adds product rules and needs a few end
 | D-01, D-11 | The API issues its own tokens: **JWT** access tokens and opaque refresh tokens, from `POST /auth/login`, `/auth/refresh`, `/auth/logout`. Sign-up takes a password and needs no token. | [Authentication](#authentication-auth), [`POST /users`](#post-users--sign-up) |
 | G-01, G-01b | "Favorite" is a playlist follow. **At most 5 per user**, own playlists included. An atomic swap for the sixth. Follow responses return the playlist's new state. | [Favorites](#favorites) |
 | G-02 | `GET /users/{username}/favorites`, and `?sort=name` on `GET /me/following/playlists`. | [Favorites](#favorites) |
-| G-03 | **At most 100 tracks per playlist** (`422 playlist_full`). | [Limits](#limits) |
+| G-03 | **At most 20 tracks per playlist** (`422 playlist_full`). | [Limits](#limits) |
 | G-04 | **At most 20 owned playlists per user** (`422 playlist_limit_reached`). `owned_playlist_count` and `favorite_count` on `GET /me`. | [Limits](#limits) |
 | G-05 | `GET /tracks/random` | [Random picks](#random-picks) |
 | G-06 | `GET /playlists/random` | [Random picks](#random-picks) |
@@ -158,7 +158,7 @@ The database enforces most rules itself. See [Mapping database errors to HTTP](#
 | `POST` | `/playlists/{id}/copy` | Copy a playlist into the caller's account | ✓ |
 | **Playlist tracks** | | | |
 | `GET` | `/playlists/{id}/tracks` | Entries in order | – / ✓ |
-| `POST` | `/playlists/{id}/tracks` | Add tracks (at the end or at a position). **(UI)** At most 100 per playlist | owner, editor |
+| `POST` | `/playlists/{id}/tracks` | Add tracks (at the end or at a position). **(UI)** At most 20 per playlist | owner, editor |
 | `POST` | `/playlists/{id}/tracks/move` | Move an entry to another position | owner, editor |
 | `DELETE` | `/playlists/{id}/tracks/{position}` | Remove one entry | owner, editor |
 | `DELETE` | `/playlists/{id}/tracks?track_id=` | Remove every occurrence of a track | owner, editor |
@@ -515,7 +515,7 @@ ETag: "2"
 }
 ```
 
-- **Fields:** `track_ids` is optional (at most 100). **(UI, G-10)** New playlists are always `private`; they become public when someone favorites them. Sending `visibility` answers `422 visibility_follows_favorites`.
+- **Fields:** `track_ids` is optional (at most 20). **(UI, G-10)** New playlists are always `private`; they become public when someone favorites them. Sending `visibility` answers `422 visibility_follows_favorites`.
 - **Database:** both statements run in one transaction.
   ```sql
   INSERT INTO playlist (name, description, owner_id, visibility)
@@ -524,7 +524,7 @@ ETag: "2"
   INSERT INTO playlist_track (playlist_id, track_id)        -- position and added_by are filled in
   SELECT :playlist_id, t.id FROM unnest(:track_ids::int[]) WITH ORDINALITY AS t(id, n) ORDER BY n;
   ```
-- **Errors:** `422` for a track that doesn't exist (`playlist_track_track_id_fkey`). **(UI)** `422 playlist_limit_reached` when the caller already owns 20 playlists; `422 playlist_full` for more than 100 `track_ids`. See [Limits](#limits).
+- **Errors:** `422` for a track that doesn't exist (`playlist_track_track_id_fkey`). **(UI)** `422 playlist_limit_reached` when the caller already owns 20 playlists; `422 playlist_full` for more than 20 `track_ids`. See [Limits](#limits).
 
 ### `GET /playlists/{id}`
 
@@ -613,7 +613,7 @@ WHERE playlist_id = :id AND owner_id = :me RETURNING share_token;
 
 ### `POST /playlists/{id}/copy`
 
-Copies a playlist the caller can view into a new playlist the caller owns. The body is optional, e.g. `{ "name": "My Road Trip" }`. **(UI)** The copy counts toward the caller's 20 playlists (`422 playlist_limit_reached`), and the source has at most 100 tracks, so the copy fits.
+Copies a playlist the caller can view into a new playlist the caller owns. The body is optional, e.g. `{ "name": "My Road Trip" }`. **(UI)** The copy counts toward the caller's 20 playlists (`422 playlist_limit_reached`), and the source has at most 20 tracks, so the copy fits. A source that is older than the limit and holds more (some seed playlists, see [DB-04](DB-Design.md#db-04-track-limit-20-per-playlist)) can't be copied: `422 playlist_full`.
 
 ```sql
 INSERT INTO playlist (name, description, owner_id, visibility)
@@ -708,7 +708,7 @@ FROM unnest(:track_ids::int[]) WITH ORDINALITY AS t(id, n);
 ```
 
 **Errors:**
-- **(UI)** `422 playlist_full`: the playlist would have more than 100 tracks. Nothing is added; the error says how many fit: `{ "error": { "code": "playlist_full", "message": "Road Trip has 98 of 100 tracks; 2 more fit.", "details": [ { "field": "track_ids", "message": "at most 2" } ] } }`.
+- **(UI)** `422 playlist_full`: the playlist would have more than 20 tracks. Nothing is added; the error says how many fit: `{ "error": { "code": "playlist_full", "message": "Road Trip has 18 of 20 tracks; 2 more fit.", "details": [ { "field": "track_ids", "message": "at most 2" } ] } }`.
 - `403 forbidden`: the caller isn't the owner or an editor. Example: kenji.watanabe adding to *Road Trip* gets `user 7 can't add tracks to playlist 20: only its owner and editors can`.
 - `412`: stale `If-Match`.
 - `422`: an unknown track.
@@ -974,9 +974,9 @@ The database keeps the column right, so no client can get it wrong ([DB-03](DB-D
 | Limit | Value | Enforced by | Error |
 |---|---|---|---|
 | Favorites per user | 5 | Trigger `playlist_follow_limit` ([DB-01](DB-Design.md#db-01-favorite-limit-5-per-user)) | `422 favorite_limit_reached` |
-| Tracks per playlist | 100 | Trigger `playlist_track_limit` ([DB-04](DB-Design.md#db-04-track-limit-100-per-playlist)) | `422 playlist_full` |
+| Tracks per playlist | 20 (was 100) | Trigger `playlist_track_limit` ([DB-04](DB-Design.md#db-04-track-limit-20-per-playlist)) | `422 playlist_full` |
 | Playlists owned per user | 20 | Trigger `playlist_owner_limit` ([DB-05](DB-Design.md#db-05-playlist-limit-20-per-owner)) | `422 playlist_limit_reached` |
-| `track_ids` per request (`POST /playlists`, `POST /playlists/{id}/tracks`) | 100 (was 500) | Request validation | `422` |
+| `track_ids` per request (`POST /playlists`, `POST /playlists/{id}/tracks`) | 20 (was 500, then 100) | Request validation | `422` |
 
 Each trigger locks the parent row (the playlist, or the user) before counting. The locks make two simultaneous requests wait for each other, so neither limit can be passed by a race. Moving tracks (`/tracks/move`) never changes the count, so it isn't affected. The limits count rows, not distinct tracks: whether a playlist may hold the same track twice is a separate, open question (UI-Design.md Q-05).
 

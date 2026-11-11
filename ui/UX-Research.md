@@ -22,7 +22,7 @@ People who love music collect it in playlists, but on most platforms a profile i
 
 **How might we** let people collect songs into playlists quickly, and show who they are through **five** playlists they chose, theirs or anyone else's?
 
-The limits are the product: 5 favorites make a profile a curated statement, 100 songs keep playlists focused, and 20 playlists keep a collection manageable.
+The limits are the product: 5 favorites make a profile a curated statement, 20 songs keep playlists focused, and 20 playlists keep a collection manageable.
 
 ---
 
@@ -85,7 +85,7 @@ Each story has acceptance criteria that tests and design reviews can check. The 
 | US-03 | a user | see my favorites first on Home | Up to 5, A–Z by name, with empty slots up to 5 and a count "n of 5". | [S3](../UI-Design.md#s3-home) |
 | US-04 | a user | see random songs and add them | Home shows 6 songs; Songs shows 20 with Shuffle and Load more. Each has Add. | [S3](../UI-Design.md#s3-home), [S4](../UI-Design.md#s4-songs) |
 | US-17 | a user looking for a particular song | search for it | The Songs screen has a search box. From 2 characters, matches by title, artist or album load as I type, ignoring accents and case. Each result has Add. ✕ or Esc brings back the random list. No matches gives a message with a hint. | [S4](../UI-Design.md#s4-songs) |
-| US-05 | a user adding a song | find the playlist fast | The add menu shows my last used playlist first, then all my playlists A–Z, then "New playlist". Each shows "n/100". Full playlists are disabled and say "Full". Playlists that already have the song say "✓ Added". | [S4](../UI-Design.md#s4-songs) |
+| US-05 | a user adding a song | find the playlist fast | The add menu shows my last used playlist first, then all my playlists A–Z, then "New playlist". Each shows "n/20". Full playlists are disabled and say "Full". Playlists that already have the song say "✓ Added". | [S4](../UI-Design.md#s4-songs) |
 | US-06 | a user who added the wrong song | undo it | The toast after adding has Undo for 5 seconds. | [S4](../UI-Design.md#s4-songs) |
 | US-07 | a user | create a playlist from anywhere | "New playlist" is at the top of every page. The dialog asks only for a name (required, up to 120 characters) and a description (optional), and says the playlist will be private. After creating, I'm on the new playlist. | [S5](../UI-Design.md#s5-create-playlist) |
 | US-08 | a user adding a song with no fitting playlist | create one from the add menu | "+ New playlist" in the menu creates the playlist with that song in it, and I stay where I was. | [S5](../UI-Design.md#s5-create-playlist) |

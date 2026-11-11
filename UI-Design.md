@@ -2,7 +2,7 @@
 
 The first version (v1) of the web app for the music-db playlist platform. It's built on the API in [API-Design.md](API-Design.md). This file is the source of truth for the UI: what each screen shows, how it behaves, which API calls it makes, and which API changes it needs.
 
-**Working name:** *Crate*, as in a crate of records. The name is a placeholder and appears only in the mockups.
+**Working name:** *Runlist*, a list of songs to run through. The name is a placeholder and appears only in the mockups.
 
 **Status:** initial design, with the first round of decisions made (see the [Decision log](#decision-log)). The app will be built in **React**. The visual direction is **Proposal A, Sleeve**.
 
@@ -52,7 +52,7 @@ The UI docs follow a light Double Diamond process: **discover and define** (who 
 
 ## Product in one paragraph
 
-The catalog holds an unlimited number of songs. You can **search** it or browse a random selection, and collect songs into **playlists** (up to 20 of your own, up to 100 songs each). Playlists are **private** by default. Each person keeps up to **5 favorites**, their own playlists or other people's, and the favorites are their **profile**: always public, shown A–Z. Favoriting one of your own playlists is how you make it public, so other people can open it, share it and favorite it. A playlist stays public while **anyone** has it as a favorite: if its owner takes it off their profile, it stays on the profiles of the people who favorited it. The app is for collecting and curating music. Playback isn't part of v1, because the database has no audio.
+The catalog holds an unlimited number of songs. You can **search** it or browse a random selection, and collect songs into **playlists** (up to 20 of your own, up to 20 songs each). Playlists are **private** by default. Each person keeps up to **5 favorites**, their own playlists or other people's, and the favorites are their **profile**: always public, shown A–Z. Favoriting one of your own playlists is how you make it public, so other people can open it, share it and favorite it. A playlist stays public while **anyone** has it as a favorite: if its owner takes it off their profile, it stays on the profiles of the people who favorited it. The app is for collecting and curating music. Playback isn't part of v1, because the database has no audio.
 
 ---
 
@@ -75,12 +75,13 @@ Decisions taken since the first draft. Each one updates the rules and screens be
 | D-11 | 2026-11-10 | Authentication uses **JWT**: the API signs short-lived (15 min) JWT access tokens, sent as `Authorization: Bearer`, plus opaque refresh tokens. | S1, S2, API-Design.md [Tokens (JWT)](API-Design.md#tokens-jwt) |
 | D-12 | 2026-11-10 | A playlist its owner unfavorited **stays in Discover and search** while anyone still has it as a favorite (answers Q-08). | S6, BR-07 |
 | D-13 | 2026-11-10 | The owner **can't** make a playlist private while others have it as a favorite; only **deleting** it does that (answers Q-10). | S7, BR-12 |
+| D-14 | 2026-11-11 | A playlist holds **at most 20 songs** (was 100). Seed playlists that already have more keep their songs, show their real count (for example "75 / 20") and are **Full**. | BR-03, S4, S5, S7, G-03, DB-Design.md [DB-04](DB-Design.md#db-04-track-limit-20-per-playlist) |
 
 ---
 
 ## Scope of v1
 
-**In scope:** Login, Sign up, Home, Songs (random songs **and search**), Create playlist, Discover playlists, Playlist (with **Edit details** for the owner), Profile (mine and other people's). Removing a song, deleting a playlist and copying a public playlist's link are also in scope, because they are the way out of the two limits (100 songs, 20 playlists) and the way to share.
+**In scope:** Login, Sign up, Home, Songs (random songs **and search**), Create playlist, Discover playlists, Playlist (with **Edit details** for the owner), Profile (mine and other people's). Removing a song, deleting a playlist and copying a public playlist's link are also in scope, because they are the way out of the two limits (20 songs, 20 playlists) and the way to share.
 
 **Out of scope for v1** (see [Future extensions](#future-extensions)): searching playlists and people, playback, reordering songs, cover upload, share links for private playlists, collaborators, liked songs, following users or artists, artist and album pages, the activity feed, settings, and avatar upload.
 
@@ -94,7 +95,7 @@ These rules are new: the API doesn't enforce all of them yet (see [API changes t
 |---|---|---|
 | BR-01 | The song catalog has no size limit. The UI shows a random sample of it, or the results of a search. | "Shuffle" gets a new sample; the search box finds anything. |
 | BR-02 | A person owns **at most 20 playlists**. | A count such as "9 of 20 playlists" on Home and in the create dialog. At 20, "New playlist" is disabled and says why. |
-| BR-03 | A playlist holds **at most 100 songs**. | A count such as "7 / 100" in the add menu and on the playlist. A full playlist is disabled in the add menu and labeled "Full". |
+| BR-03 | A playlist holds **at most 20 songs** (D-14). | A count such as "7 / 20" in the add menu and on the playlist. A full playlist is disabled in the add menu and labeled "Full". |
 | BR-04 | A person has **at most 5 favorite playlists**, counting their own and other people's together. | "3 of 5" next to the Favorites heading. Favoriting a sixth opens [Replace a favorite](#replace-a-favorite) and never fails silently. |
 | BR-05 | You can favorite your own playlists, and other people's **public** playlists. | Hearts appear only where favoriting is allowed. |
 | BR-06 | A profile shows its owner's favorites **in alphabetical order** (D-04). Favorites are **always public** (D-05): everyone who opens the profile sees all of them. | Empty slots appear only on your own profile. |
@@ -183,7 +184,7 @@ One header on every signed-in screen. The **New playlist** button lives here, at
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ ◉ Crate      Home   Songs   Discover                  [ + New playlist ] (AG)│
+│ ◉ Runlist    Home   Songs   Discover                  [ + New playlist ] (AG)│
 └──────────────────────────────────────────────────────────────────────────────┘
                                                                             │
                                                          (AG) menu: My profile
@@ -204,7 +205,7 @@ Each screen has: its **job**, a **low-fidelity wireframe**, its **content and be
 
 ```
 ┌──────────────────────────────────────┐
-│               ◉ Crate                │
+│               ◉ Runlist              │
 │   Collect songs. Share playlists.    │
 │                                      │
 │  Username or email                   │
@@ -230,7 +231,7 @@ Each screen has: its **job**, a **low-fidelity wireframe**, its **content and be
 
 ```
 ┌──────────────────────────────────────┐
-│               ◉ Crate                │
+│               ◉ Runlist              │
 │        Create your account           │
 │                                      │
 │  Name                                │
@@ -264,7 +265,7 @@ Each screen has: its **job**, a **low-fidelity wireframe**, its **content and be
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│ ◉ Crate      Home   Songs   Discover                  [ + New playlist ] (AG)│
+│ ◉ Runlist    Home   Songs   Discover                  [ + New playlist ] (AG)│
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ Good evening, Ana                                                            │
 │                                                                              │
@@ -322,11 +323,11 @@ Each screen has: its **job**, a **low-fidelity wireframe**, its **content and be
 │                                                    ┌───────────────────────┐ │
 │                                                    │ Add to playlist       │ │
 │                                                    │ LAST USED             │ │
-│                                                    │  Road Trip      7/100 │ │
+│                                                    │  Road Trip       7/20 │ │
 │                                                    │ ALL PLAYLISTS (A–Z)   │ │
 │                                                    │  Boleros      ✓ Added │ │
-│                                                    │  Night Drive   42/100 │ │
-│                                                    │  Road Trip      7/100 │ │
+│                                                    │  Night Drive    12/20 │ │
+│                                                    │  Road Trip       7/20 │ │
 │                                                    │  Workout         Full │ │
 │                                                    │ ───────────────────── │ │
 │                                                    │  + New playlist       │ │
@@ -363,12 +364,12 @@ With a search (D-08):
   1. **Last used:** the playlist you most recently added a song to (BR-09). It also appears in the A–Z list below, so the list stays complete and predictable.
   2. **All playlists (A–Z):** every playlist you own, sorted by name with a locale-aware, accent-insensitive comparison.
   3. **+ New playlist:** opens S5, and after the playlist is created, adds the song to it.
-- **Each item** shows its count "n/100". A **full** playlist is disabled and labeled "Full". A playlist that **already has the song** shows "✓ Added" and is disabled.
+- **Each item** shows its count "n/20". A **full** playlist is disabled and labeled "Full". A playlist that **already has the song** shows "✓ Added" and is disabled.
 - **After adding:** the menu closes and a toast says "Added to Road Trip" with **Undo** for 5 seconds. Undo removes the entry it just added.
 - **Load more:** gets 20 more random songs and leaves out songs already on screen. Shuffle replaces the whole list.
 - **No playlists yet:** the menu shows only "You don't have a playlist yet" and **+ New playlist**.
 - **API:** random: `GET /tracks/random?limit=20&exclude=…` *(G-05)*. Search: `GET /search?q=daft+punk&types=track&limit=20&offset=0` *(needs G-12)*. Add menu: `GET /me/playlists?role=owner&sort=name` with `last_added_at` *(G-07)* and `contains_track` *(G-08)*. Add: `POST /playlists/{id}/tracks` `{ "track_ids": [id] }` with `If-Match: "<version>"`. Undo: `DELETE /playlists/{id}/tracks/{position}` with the new version.
-- **Errors:** `412` (someone else changed the playlist): get the playlist's version again and retry once without telling the user, because appending is safe to retry. `422 playlist_full` *(G-03)*: mark the playlist "Full" and show "Road Trip is full (100 songs). Remove a song or pick another playlist."
+- **Errors:** `412` (someone else changed the playlist): get the playlist's version again and retry once without telling the user, because appending is safe to retry. `422 playlist_full` *(G-03)*: mark the playlist "Full" and show "Road Trip is full (20 songs). Remove a song or pick another playlist."
 
 ### S5 Create playlist
 
@@ -448,7 +449,7 @@ With a search (D-08):
 │  3  One More Time         Daft Punk       Discovery            5:20    ⋯     │
 │  …                                                                           │
 │  ─────────────────────────────────────────                                   │
-│  7 / 100 songs                                    (owner only)               │
+│  7 / 20 songs                                     (owner only)               │
 └──────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -464,7 +465,7 @@ With a search (D-08):
   - **Edit details** (owner only, D-09) opens the [Edit details](#edit-details) dialog.
   - **⋯ menu** (owner only): **Edit details** again, and **Delete playlist**, which asks "Delete Road Trip? Its 7 songs are removed from it. This can't be undone."
 - **Song rows:** number, title, artist, album, time. The **⋯** on a row (owner only) has **Remove from playlist**, with an Undo toast. People who don't own the playlist see no menu on rows in v1.
-- **Owner only:** the capacity line "7 / 100 songs" at the end of the list.
+- **Owner only:** the capacity line "7 / 20 songs" at the end of the list.
 - **States:** loading · empty for the owner ("No songs yet." with a button "Find songs" that goes to S4) · empty for others ("This playlist has no songs yet.") · not found, which covers a playlist that doesn't exist, has been deleted, or is private and not yours ("We can't find this playlist. It may have been deleted or made private.") · signed out (a public playlist is readable; Favorite asks you to log in).
 - **API:** `GET /playlists/{id}` (gives `visibility`, `my_access.is_following` and `version`) and `GET /playlists/{id}/tracks?limit=100` in parallel. Edit details: `PATCH /playlists/{id}` `{ name, description }` with `If-Match`. Remove: `DELETE /playlists/{id}/tracks/{position}` with `If-Match`. Delete: `DELETE /playlists/{id}`. Favorite and unfavorite as in S6; the API changes the visibility *(G-11)*. `404` gives the not-found state. `412` on remove or edit: reload and show "This playlist changed. We've reloaded it."
 
@@ -630,7 +631,7 @@ In the mockups you can try: searching songs, the add menu (last used first, then
 | G-01 | **5-favorite limit** (BR-04), and an atomic swap for the Replace dialog. | Trigger `playlist_follow_limit` → `422 favorite_limit_reached`; `PUT /me/following/playlists/{id}` with `{ "replaces": old_id }`. [Favorites](API-Design.md#favorites) | S3, S6, S7, S8 |
 | G-01b | **Favoriting your own playlist** (BR-05). | Allowed; no self-check on `playlist_follow`. Still to confirm against the schema. [Favorites](API-Design.md#favorites) | S7, S8 |
 | G-02 | **Another person's favorites**, A–Z. | `GET /users/{username}/favorites?sort=name`; `?sort=name` on `GET /me/following/playlists`. [`GET /users/{username}/favorites`](API-Design.md#get-usersusernamefavorites) | S3, S8 |
-| G-03 | **100-song limit** (BR-03). | Trigger `playlist_track_limit` → `422 playlist_full`; at most 100 `track_ids` per request. [Limits](API-Design.md#limits) | S4, S5, S7 |
+| G-03 | **20-song limit** (BR-03, D-14). | Trigger `playlist_track_limit` ([DB-04](DB-Design.md#db-04-track-limit-20-per-playlist)) → `422 playlist_full`; at most 20 `track_ids` per request. [Limits](API-Design.md#limits) | S4, S5, S7 |
 | G-04 | **20-playlist limit** (BR-02), and the counts for the UI. | Trigger `playlist_owner_limit` → `422 playlist_limit_reached`; `owned_playlist_count`, `favorite_count` on `GET /me`. [Limits](API-Design.md#limits) | S3, S5 |
 | G-05 | **Random songs.** | `GET /tracks/random?limit=&exclude=`, picked by `random_tracks()` (DB-06). [Random picks](API-Design.md#random-picks) | S3, S4 |
 | G-06 | **Random playlists from other people.** | `GET /playlists/random?limit=&exclude=`. [Random picks](API-Design.md#random-picks) | S3, S6 |
@@ -652,7 +653,7 @@ Smaller notes:
 
 ## Implementation notes (React)
 
-The stack is React (D-03). These are suggestions for the first build, not decisions: the libraries can change without changing anything else in this document.
+The stack is React (D-03). It's built in [ui-react-music](https://github.com/oggmont/ui-react-music) (local clone `../ui-react-music`). These are suggestions for the first build, not decisions: the libraries can change without changing anything else in this document.
 
 | Concern | Suggestion | Why |
 |---|---|---|

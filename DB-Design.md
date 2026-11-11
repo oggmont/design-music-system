@@ -2,7 +2,7 @@
 
 The database changes behind the web UI ([UI-Design.md](UI-Design.md)) and the API changes it needs ([API-Design.md](API-Design.md), sections marked **(UI)**). This file holds the SQL for each change, so the changes can be moved into the database project (`db-postgresql-music`) later and fitted to its structure. The API documents only behavior, and links here for the SQL.
 
-**Status:** proposal. Nothing here is in the database yet. Each change has an ID (**DB-xx**). The API spec, the UI spec and future migrations can refer to that ID.
+**Status:** proposal. Most of these changes are already in the database project (`db-postgresql-music`), with DB-04 at 100 tracks. DB-04's new limit of **20 tracks** (2026-11-11) is made in its working tree but not committed, and the running database still has 100 until `make reset`. Each change has an ID (**DB-xx**). The API spec, the UI spec and future migrations can refer to that ID.
 
 **Contents**
 
@@ -13,7 +13,7 @@ The database changes behind the web UI ([UI-Design.md](UI-Design.md)) and the AP
 - [DB-01 Favorite limit (5 per user)](#db-01-favorite-limit-5-per-user)
 - [DB-02 Favoriting your own playlist](#db-02-favoriting-your-own-playlist)
 - [DB-03 Visibility follows favorites](#db-03-visibility-follows-favorites)
-- [DB-04 Track limit (100 per playlist)](#db-04-track-limit-100-per-playlist)
+- [DB-04 Track limit (20 per playlist)](#db-04-track-limit-20-per-playlist)
 - [DB-05 Playlist limit (20 per owner)](#db-05-playlist-limit-20-per-owner)
 - [DB-06 Random tracks](#db-06-random-tracks)
 - [DB-07 Random playlists](#db-07-random-playlists)
@@ -44,7 +44,7 @@ The database changes behind the web UI ([UI-Design.md](UI-Design.md)) and the AP
 | DB-01 | At most **5 favorites** per user | trigger | BR-04 / G-01 | `PUT /me/following/playlists/{id}` |
 | DB-02 | Owners can favorite their own playlist | check only | BR-05 / G-01b | same |
 | DB-03 | **Visibility follows favorites**: `public` while any favorite exists, `private` otherwise; nobody else can change it; new playlists are `private` | triggers, default, data migration | BR-10, BR-12, BR-13, D-10, D-12, D-13 / G-10, G-11 | `POST`, `PATCH /playlists`, follows |
-| DB-04 | At most **100 tracks** per playlist | trigger | BR-03 / G-03 | `POST /playlists`, `POST /playlists/{id}/tracks`, `/copy` |
+| DB-04 | At most **20 tracks** per playlist (was 100) | trigger | BR-03 / G-03 | `POST /playlists`, `POST /playlists/{id}/tracks`, `/copy` |
 | DB-05 | At most **20 owned playlists** per user | trigger | BR-02 / G-04 | `POST /playlists`, `/copy` |
 | DB-06 | `random_tracks(limit, exclude)` | function | BR-08 / G-05 | `GET /tracks/random` |
 | DB-07 | `random_playlists(user, limit, exclude)` + partial index | function, index | BR-07 / G-06 | `GET /playlists/random` |
@@ -244,15 +244,15 @@ The seed itself also needs updating: it should insert playlists without a visibi
 
 ---
 
-## DB-04 Track limit (100 per playlist)
+## DB-04 Track limit (20 per playlist)
 
 ```sql
 CREATE OR REPLACE FUNCTION playlist_track_limit() RETURNS trigger
 LANGUAGE plpgsql AS $$
 BEGIN
   PERFORM 1 FROM playlist WHERE playlist_id = NEW.playlist_id FOR UPDATE;   -- one add at a time per playlist
-  IF (SELECT count(*) FROM playlist_track WHERE playlist_id = NEW.playlist_id) >= 100 THEN
-    RAISE EXCEPTION 'playlist % already has 100 tracks', NEW.playlist_id
+  IF (SELECT count(*) FROM playlist_track WHERE playlist_id = NEW.playlist_id) >= 20 THEN
+    RAISE EXCEPTION 'playlist % already has 20 tracks', NEW.playlist_id
       USING ERRCODE = 'check_violation', CONSTRAINT = 'playlist_track_limit';
   END IF;
   RETURN NEW;
@@ -263,10 +263,23 @@ CREATE TRIGGER playlist_track_limit
   FOR EACH ROW EXECUTE FUNCTION playlist_track_limit();
 ```
 
-- **What it covers:** it runs per row, so a multi-row insert (`POST /playlists` with `track_ids`, `/copy`, adding several tracks) stops at the 101st row, and the whole statement rolls back. The API checks the count first so it can say how many still fit.
+- **What it covers:** it runs per row, so a multi-row insert (`POST /playlists` with `track_ids`, `/copy`, adding several tracks) stops at the 21st row, and the whole statement rolls back. The API checks the count first so it can say how many still fit.
 - **Name order:** if the database already has a `BEFORE INSERT` trigger on `playlist_track` (the one that fills in `position` on append), the order doesn't matter: that one sets columns and this one only counts rows. PostgreSQL runs triggers of the same kind in name order.
 - **Moves and removals** never insert rows, so they're not affected.
-- **Existing data:** `SELECT playlist_id, count(*) FROM playlist_track GROUP BY 1 HAVING count(*) > 100;` should return nothing.
+- **Existing data:** the trigger only checks inserts, so a playlist that already holds more than 20 tracks keeps them. Nothing more can be added to it, but its tracks can still be moved and removed. The seed has nine such playlists, all owned by `musicdb`. This query lists them: `SELECT playlist_id, count(*) FROM playlist_track GROUP BY 1 HAVING count(*) > 20;`
+
+  | Playlist | ID | Tracks |
+  |---|---|---|
+  | *Music* | 1 | 3289 |
+  | *90's Music* | 5 | 1477 |
+  | *The Beatles: Original Albums* | 19 | 193 |
+  | *Classical* | 12 | 75 |
+  | *Brazilian Music* | 11 | 39 |
+  | *Heavy Metal Classic* | 17 | 26 |
+  | *Classical 101 - Deep Cuts*, *- Next Steps*, *- The Basics* | 13, 14, 15 | 25 each |
+
+  They stay as they are, like the first three, which were already over 100. To make the seed obey the limit, trim them instead (DBO-07).
+- **Changed 2026-11-11 (100 → 20):** a database that already has the 100-track trigger only needs the `CREATE OR REPLACE FUNCTION` above: the trigger and its name stay the same. Also update the seed's list of playlists that are older than the limit (`02_data.sql`), the `make verify` rule (*at most 20 tracks per playlist, 9 sample playlists excepted*), and `data-model.md`. To undo this change, run the function again with 100.
 - **Undo:** drop the trigger and the function.
 
 ---
@@ -500,7 +513,7 @@ Run in this order. Each step is safe to run alone.
 |---|---|---|
 | 1 | DB-00 | Extensions and `immutable_unaccent`. |
 | 2 | DB-02 | Check only. Fix any self-check before going on. |
-| 3 | Data checks for DB-01, DB-04, DB-05 | The three "more than the limit" queries must return nothing. |
+| 3 | Data checks for DB-01, DB-04, DB-05 | The three "more than the limit" queries must return nothing, except the nine seed playlists listed in DB-04. |
 | 4 | DB-01, DB-04, DB-05 | The three limit triggers. Independent of each other. |
 | 5 | DB-03 part 1 and 4 | New default, then migrate the data. |
 | 6 | DB-03 part 2 and 3 | The sync trigger, then the guard. The guard must come **after** the data migration. |
@@ -551,11 +564,11 @@ SAVEPOINT s;
 UPDATE playlist SET visibility = 'public' WHERE name='Verify';       -- expect: ERROR, playlist_visibility_derived
 ROLLBACK TO SAVEPOINT s;
 
--- DB-04: the 101st track is refused
+-- DB-04: the 21st track is refused
 SAVEPOINT s;
 INSERT INTO playlist_track (playlist_id, track_id)
 SELECT (SELECT playlist_id FROM playlist WHERE name='Verify'), track_id
-FROM track ORDER BY track_id LIMIT 101;                              -- expect: ERROR, playlist_track_limit
+FROM track ORDER BY track_id LIMIT 21;                               -- expect: ERROR, playlist_track_limit
 ROLLBACK TO SAVEPOINT s;
 
 -- DB-01: a sixth favorite is refused (uses 6 public playlists or the user's own)
@@ -588,4 +601,5 @@ The last query is also a good permanent check for the database project's `make v
 | DBO-03 | Update the seed: insert playlists without a visibility (DB-03 sets it), and decide which seed follows to keep so the example playlists stay public. Today *Road Trip* (20) has follows and stays public. |
 | DBO-04 | Update `data-model.md` and the schema diagram with the new triggers, functions, view and indexes. |
 | DBO-05 | `unlisted` and `share_token` stay unused until share links for private playlists exist (UI-Design.md, Future extensions). Keep the lookup value, or drop it then. |
+| DBO-07 | Seed playlists with more than 20 tracks (DB-04): kept for now, and closed to new tracks. If the seed should obey the limit, trim each one to its first 20 entries and remove the exception from `make verify`. |
 | DBO-06 | Duplicate tracks in a playlist (UI-Design.md Q-05): if they're forbidden, add `UNIQUE (playlist_id, track_id)` to `playlist_track`, after removing existing duplicates. |

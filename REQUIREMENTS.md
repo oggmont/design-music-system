@@ -487,6 +487,7 @@ Where the implementation departs from, or adds to, API-Design.md:
 | Error body | `code` and `message`. | Adds `details` (`field`, `message`) for validation errors. |
 | New endpoints | – | `PUT /me/password`, `PUT /admin/users/{username}/role`, `PUT /admin/users/{username}/password`. |
 | `GET /me` | Profile plus `email`. | Also `role`. |
+| Tracks per playlist | **20** per playlist and per request (G-03, DB-04; changed 2026-11-11). | **100** until the change is committed and deployed. It's made, uncommitted, in `PlaylistLimits.MAX_TRACKS`, the `playlist_track_limit` message in `DatabaseErrors` and the database trigger. Remove this row once it's deployed. |
 | Database | Read only through its tables, views and functions. | Also an `auth` schema and the `oscargm` row, so db-postgresql-music's `make verify` reports 8 rows in `app_user` instead of 7. |
 
 ## 25. Open items

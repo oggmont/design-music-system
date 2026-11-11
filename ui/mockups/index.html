@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Crate UI Mockups</title>
+<title>Runlist UI Mockups</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -387,7 +387,7 @@ textarea.input{resize:vertical; min-height:84px}
   <header class="intro">
     <div>
       <div class="eyebrow">music-db · UI v1 · clickable mockups</div>
-      <h1>Crate UI v1</h1>
+      <h1>Runlist UI v1</h1>
       <p>Every v1 screen from UI-Design.md. Proposal A, Sleeve, is the chosen direction; B is kept for reference. Pick a device and a screen, then use the app inside the frame: song search, the add menu, favorites up to the limit of 5 (which also make your own playlists public), creating and editing a playlist and removing a song all work on sample data from the database seed.</p>
     </div>
   </header>
@@ -416,7 +416,7 @@ textarea.input{resize:vertical; min-height:84px}
   <div class="stage-wrap">
     <div class="stage">
       <div class="frame" id="frame">
-        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url">crate.app/</span><span class="clock">9:41</span><span class="clock">●●● 5G</span></div>
+        <div class="bar"><span class="dots"><i></i><i></i><i></i></span><span class="url" id="url">runlist.app/</span><span class="clock">9:41</span><span class="clock">●●● 5G</span></div>
         <div class="screenbox"><div class="app pa" id="app"></div></div>
       </div>
     </div>
@@ -426,7 +426,7 @@ textarea.input{resize:vertical; min-height:84px}
   <section class="legend" aria-label="About the proposals">
     <div><b>A · Sleeve.</b> Record sleeves on a shelf. Light, cool paper white with cobalt; wide Archivo for names. Top navigation, covers lead every section. <b>Chosen direction (D-02).</b></div>
     <div><b>B · Gig poster.</b> A concert poster in a dark room. Condensed Bebas Neue, amber on slate, a sidebar with your playlists, and dense rows instead of cards. Kept for reference, not developed further.</div>
-    <div><b>Same rules in both.</b> 5 favorites (yours and others' combined, always public, A–Z), 100 songs per playlist, 20 playlists per person, new playlists private, last used playlist first in the add menu.</div>
+    <div><b>Same rules in both.</b> 5 favorites (yours and others' combined, always public, A–Z), 20 songs per playlist, 20 playlists per person, new playlists private, last used playlist first in the add menu.</div>
   </section>
   <footer>Sample data: users, playlists and songs from the music-db seed (ana.garcia, ben.carter, diego.ramos, kenji.watanabe; Road Trip, Boleros para mamá; Abbey Road, Discovery). Spec: UI-Design.md, ui/Design-System.md, ui/User-Flows.md.</footer>
 </div>
@@ -476,25 +476,25 @@ const USERS0 = {
 const PLAYLISTS0 = [
   {id:20, name:"Road Trip", owner:"ana.garcia", desc:"Songs for the drive. Add yours!", tracks:[3674,3668,4199,2233,4252,4201,4190]},
   {id:25, name:"Sunday Morning", owner:"ana.garcia", desc:"Coffee and vinyl.", tracks:[3674,3669,4037]},
-  {id:26, name:"Workout", owner:"ana.garcia", desc:"Fast and loud.", tracks:[4202,4252,4199], pad:97},
+  {id:26, name:"Workout", owner:"ana.garcia", desc:"Fast and loud.", tracks:[4202,4252,4199], pad:17},
   {id:27, name:"Cocina con Abuela", owner:"ana.garcia", desc:"Boleros while we cook.", tracks:[5101,5110,5111]},
-  {id:28, name:"Focus", owner:"ana.garcia", desc:"", tracks:[2229,2231,4200], pad:20},
-  {id:29, name:"Beatles Forever", owner:"ana.garcia", desc:"Every era, no skips.", tracks:[3668,3669,3674,3672,3735,4037], pad:30},
+  {id:28, name:"Focus", owner:"ana.garcia", desc:"", tracks:[2229,2231,4200], pad:9},
+  {id:29, name:"Beatles Forever", owner:"ana.garcia", desc:"Every era, no skips.", tracks:[3668,3669,3674,3672,3735,4037], pad:8},
   {id:41, name:"Late Night Synths", owner:"ana.garcia", desc:"", tracks:[4201,4249,4200], pad:9},
   {id:42, name:"Rainy Day", owner:"ana.garcia", desc:"For grey afternoons.", tracks:[2240,3735], pad:14},
-  {id:43, name:"Party Starters", owner:"ana.garcia", desc:"", tracks:[4199,4252,4202], pad:21},
+  {id:43, name:"Party Starters", owner:"ana.garcia", desc:"", tracks:[4199,4252,4202], pad:13},
   {id:22, name:"Boleros para mamá", owner:"diego.ramos", desc:"Para escuchar los domingos.", tracks:[5101,5110,5111,5112], pad:8},
-  {id:30, name:"Night Drive", owner:"ben.carter", desc:"City lights, synths, no traffic.", tracks:[4201,4249,4200,4252], pad:20},
-  {id:31, name:"Coding Focus", owner:"kenji.watanabe", desc:"Long tracks, no vocals in the way.", tracks:[2229,2231,4200], pad:55},
-  {id:32, name:"Mexican 80s", owner:"diego.ramos", desc:"", tracks:[5102,5103], pad:29},
+  {id:30, name:"Night Drive", owner:"ben.carter", desc:"City lights, synths, no traffic.", tracks:[4201,4249,4200,4252], pad:8},
+  {id:31, name:"Coding Focus", owner:"kenji.watanabe", desc:"Long tracks, no vocals in the way.", tracks:[2229,2231,4200], pad:15},
+  {id:32, name:"Mexican 80s", owner:"diego.ramos", desc:"", tracks:[5102,5103], pad:9},
   {id:33, name:"Vinyl Sundays", owner:"ben.carter", desc:"Side A, then side B.", tracks:[3674,2240], pad:16},
   {id:34, name:"Tokyo Commute", owner:"kenji.watanabe", desc:"Yamanote line, 40 minutes.", tracks:[4210,4201], pad:12},
-  {id:35, name:"Prog Essentials", owner:"sofia.lopez", desc:"", tracks:[2250,2231], pad:22},
+  {id:35, name:"Prog Essentials", owner:"sofia.lopez", desc:"", tracks:[2250,2231], pad:14},
   {id:36, name:"Analog Love", owner:"sofia.lopez", desc:"", tracks:[3669,4249], pad:18},
   {id:37, name:"Space Rock", owner:"ben.carter", desc:"", tracks:[2229,2240,2250], pad:11},
-  {id:38, name:"Wedding Dance", owner:"diego.ramos", desc:"First dance to last call.", tracks:[5110,4252,4199], pad:40},
-  {id:39, name:"Study Beats", owner:"kenji.watanabe", desc:"", tracks:[4200,4210], pad:33},
-  {id:40, name:"Golden Oldies", owner:"sofia.lopez", desc:"", tracks:[3660,4037], pad:26}
+  {id:38, name:"Wedding Dance", owner:"diego.ramos", desc:"First dance to last call.", tracks:[5110,4252,4199], pad:14},
+  {id:39, name:"Study Beats", owner:"kenji.watanabe", desc:"", tracks:[4200,4210], pad:10},
+  {id:40, name:"Golden Oldies", owner:"sofia.lopez", desc:"", tracks:[3660,4037], pad:12}
 ];
 const OTHER_FAVS = {"ben.carter":[30,20,31,37], "diego.ramos":[22,32], "kenji.watanabe":[31,30,22,34,20], "sofia.lopez":[35,36,40]};
 const COUNTRIES = ["Argentina","Colombia","Japan","Mexico","Spain","United Kingdom","United States"];
@@ -523,7 +523,7 @@ const NOTES = {
   login:{title:"S1 Login", spec:"UI-Design.md § S1 · D-01", tries:["Submit with an empty field to see the inline check.","Switch the state to <i>Wrong password</i>: one message for both a wrong password and an unknown user.","Log in to go to Home. Use the eye to show the password."], api:["POST /auth/login","GET /me","POST /auth/refresh (background)"]},
   signup:{title:"S2 Sign up", spec:"UI-Design.md § S2", tries:["Type a name: the username is suggested from it (accents removed, spaces become dots).","Leave a field to see its check. Try the username <code>ana.garcia</code>: it's taken.","Create the account to land on Home as a new user."], api:["GET /reference/countries","POST /users","POST /auth/login"]},
   home:{title:"S3 Home", spec:"UI-Design.md § S3", tries:["Favorites come first, A–Z, with empty slots up to 5. They're public.","Your other playlists are private unless someone has them as a favorite. Their hearts make them public favorites.","Unfavorite <i>Vinyl Sundays</i>: you're its only favorite, so you're asked first, because it becomes private.","<b>+ Add</b> on a song opens the add menu: last used first, then A–Z. The 20 of 20 state disables New playlist."], api:["GET /me/following/playlists?sort=name (G-02)","GET /tracks/random?limit=6 (new, G-05)","GET /playlists/random?limit=4 (new, G-06)","GET /me/playlists?role=owner (G-09)"]},
-  songs:{title:"S4 Songs", spec:"UI-Design.md § S4 · D-08", tries:["Type in the search box (try <code>daft</code>, <code>jose</code> or <code>abbey</code>): matches load as you type, ignoring accents. ✕ or Esc brings the random list back.","Open <b>+ Add</b>. <i>Sunday Morning</i> is last used. <i>Workout</i> is full (100/100). Rows that already have the song say Added.","Pick a playlist, then press Undo in the toast. <b>+ New playlist</b> in the menu creates one with the song in it."], api:["GET /search?q=…&types=track (needs G-12)","GET /tracks/random?limit=20 (new, G-05)","GET /me/playlists?sort=name with last_added_at, contains_track (G-07, G-08)","POST /playlists/{id}/tracks + If-Match"]},
+  songs:{title:"S4 Songs", spec:"UI-Design.md § S4 · D-08", tries:["Type in the search box (try <code>daft</code>, <code>jose</code> or <code>abbey</code>): matches load as you type, ignoring accents. ✕ or Esc brings the random list back.","Open <b>+ Add</b>. <i>Sunday Morning</i> is last used. <i>Workout</i> is full (20/20). Rows that already have the song say Added.","Pick a playlist, then press Undo in the toast. <b>+ New playlist</b> in the menu creates one with the song in it."], api:["GET /search?q=…&types=track (needs G-12)","GET /tracks/random?limit=20 (new, G-05)","GET /me/playlists?sort=name with last_added_at, contains_track (G-07, G-08)","POST /playlists/{id}/tracks + If-Match"]},
   create:{title:"S5 Create playlist", spec:"UI-Design.md § S5 · D-06", tries:["Create stays disabled until the name has a character.","New playlists are private; the dialog says how to make one public.","From the header you go to the new playlist. From the add menu the song is added and you stay on Songs."], api:["POST /playlists { name, description, visibility: private, track_ids? }","422 playlist_limit_reached (new, G-04)"]},
   discover:{title:"S6 Discover playlists", spec:"UI-Design.md § S6", tries:["Only public playlists appear: the ones someone keeps as a favorite.","Favorite two playlists to reach 5 of 5, then a sixth: Replace a favorite lists your five, A–Z, and says which would stay public and which would become private.","Shuffle gets new random playlists that you haven't favorited."], api:["GET /playlists/random?limit=12 (new, G-06)","PUT / DELETE /me/following/playlists/{id}","422 favorite_limit_reached (new, G-01)"]},
   playlist:{title:"S7 Playlist", spec:"UI-Design.md § S7 · D-06, D-09, D-10", tries:["The badge says whether your playlist is public or private. Unfavorite <i>Road Trip</i>: it leaves your profile but stays public, because Ben and Kenji have it. <i>Yours, private</i> shows one nobody has.","<b>Edit details</b> changes the name and description. Save stays disabled until something changes.","Copy link works only on public playlists. ⋯ on a row removes a song with Undo; ⋯ in the header deletes the playlist."], api:["GET /playlists/{id}","GET /playlists/{id}/tracks?limit=100","PATCH /playlists/{id} { name, description } + If-Match","PUT / DELETE /me/following/playlists/{id} (visibility follows, G-11)","DELETE /playlists/{id}/tracks/{position} + If-Match"]},
@@ -619,12 +619,12 @@ function header(){
   const sc = S.screen==="create" ? (S.variant==="menu"?"songs":"home") : S.screen;
   const cur = k => (sc===k || (k==="me" && sc==="profile" && S.viewUser===S.data.me)) ? ' aria-current="page"' : "";
   if(S.signedOut){
-    return `<header class="topbar"><button class="logo" data-act="nav" data-to="login">${LOGO}<span>Crate</span></button><span class="spacer"></span><button class="btn ghost sm" data-act="nav" data-to="login">Log in</button><button class="btn primary sm" data-act="nav" data-to="signup">Sign up</button></header>`;
+    return `<header class="topbar"><button class="logo" data-act="nav" data-to="login">${LOGO}<span>Runlist</span></button><span class="spacer"></span><button class="btn ghost sm" data-act="nav" data-to="login">Log in</button><button class="btn primary sm" data-act="nav" data-to="signup">Sign up</button></header>`;
   }
   const atLimit = mine().length >= 20;
   const side = mine().slice().sort((a,b)=>coll.compare(a.name,b.name)).map(p=>`<button data-act="open" data-id="${p.id}"><span>${esc(p.name)}</span><span class="muted num">${count(p)}</span></button>`).join("");
   return `<header class="topbar">
-    <button class="logo" data-act="nav" data-to="home" aria-label="Crate, Home">${LOGO}<span>Crate</span></button>
+    <button class="logo" data-act="nav" data-to="home" aria-label="Runlist, Home">${LOGO}<span>Runlist</span></button>
     <nav class="navlinks" aria-label="Main">
       <button data-act="nav" data-to="home"${cur("home")}>${ico("home")}Home</button>
       <button data-act="nav" data-to="songs"${cur("songs")}>${ico("music")}Songs</button>
@@ -713,7 +713,7 @@ function vPlaylist(){
         ${own?`<button class="btn secondary" data-act="edit">${ico("edit")}Edit details</button><button class="iconbtn" data-act="plmenu" data-id="${p.id}" aria-haspopup="menu" aria-label="More for ${esc(p.name)}">${ico("more")}</button>`:""}
       </div>${own&&!pub?`<p class="hint" id="priv-hint" style="margin:8px 0 0">Private playlists can't be shared. Favorite it to make it public.</p>`:""}</div></div>
     ${n?`<div><div class="songs" role="table" aria-label="Songs in ${esc(p.name)}">${songHead()}${rows}${pad}</div>
-      ${own?`<div class="cap"><span class="num"><b style="color:var(--c-text)">${n}</b> / 100 songs</span><span class="meter" aria-hidden="true"><i style="width:${n}%"></i></span>${n>=100?'<b style="color:var(--c-danger)">Full</b>':""}</div>`:""}</div>`:empty}
+      ${own?`<div class="cap"><span class="num"><b style="color:var(--c-text)">${n}</b> / 20 songs</span><span class="meter" aria-hidden="true"><i style="width:${Math.min(100,n*5)}%"></i></span>${n>=20?'<b style="color:var(--c-danger)">Full</b>':""}</div>`:""}</div>`:empty}
   </div>`;
 }
 function vProfile(){
@@ -736,7 +736,7 @@ function vLogin(){
   const err = S.variant==="error";
   return `<div class="auth">${authArt()}
     <div class="auth-form">
-      <div class="logo">${LOGO}<span>Crate</span></div>
+      <div class="logo">${LOGO}<span>Runlist</span></div>
       <div><h1 class="disp">Log in</h1><p class="muted" style="margin:6px 0 0">Collect songs. Share playlists.</p></div>
       <form id="f-login" novalidate>
         ${err?`<div class="banner" role="alert">${ico("alert")}<span>That username and password don't match. Check them and try again.</span></div>`:""}
@@ -751,7 +751,7 @@ function vSignup(){
   const taken = S.variant==="taken";
   return `<div class="auth">${authArt()}
     <div class="auth-form">
-      <div class="logo">${LOGO}<span>Crate</span></div>
+      <div class="logo">${LOGO}<span>Runlist</span></div>
       <h1 class="disp">Create your account</h1>
       <form id="f-signup" novalidate>
         <div class="field"><label for="su-name">Name</label><input class="input" id="su-name" autocomplete="name" maxlength="80" value="${taken?"Sofía López":""}"><span class="err" id="su-name-e" hidden></span></div>
@@ -775,8 +775,8 @@ function vMenu(){
   let body = "";
   if(m.kind==="add"){
     const t = T[m.track], list = mine().slice().sort((a,b)=>coll.compare(a.name,b.name));
-    const item = p => { const n=count(p), full=n>=100, has=p.tracks.includes(m.track), dis=full||has;
-      return `<button class="mi" role="menuitem" data-act="${dis?"noop":"pick"}" data-id="${p.id}" ${dis?'aria-disabled="true"':""}>${cover(p)}<span class="nm">${esc(p.name)}</span><span class="st${full?" full":has?" added":""}">${full?"Full":has?"✓ Added":`${n}/100`}</span></button>`; };
+    const item = p => { const n=count(p), full=n>=20, has=p.tracks.includes(m.track), dis=full||has;
+      return `<button class="mi" role="menuitem" data-act="${dis?"noop":"pick"}" data-id="${p.id}" ${dis?'aria-disabled="true"':""}>${cover(p)}<span class="nm">${esc(p.name)}</span><span class="st${full?" full":has?" added":""}">${full?"Full":has?"✓ Added":`${n}/20`}</span></button>`; };
     const last = pl(S.data.lastUsed);
     body = `<div class="m-title">Add “${esc(t.title)}” to</div>`
       + (list.length>=8?`<div class="filter"><input class="input" id="menu-filter" placeholder="Filter playlists" aria-label="Filter playlists" autocomplete="off"></div>`:"")
@@ -903,7 +903,7 @@ function bindForms(){
     fs.addEventListener("submit", e=>{ e.preventDefault(); let ok=true; Object.keys(ck).forEach(id=>{ const m=ck[id](); setErr(id,m); if(m) ok=false; });
       if(!ok){ const bad = fs.querySelector('[aria-invalid="true"]'); if(bad) bad.focus(); return; }
       const d = freshData(); d.users[un.value] = {name:nm.value.trim(), country:$("#su-country").value, bio:""}; d.me = un.value; d.favorites=[]; d.lastUsed=null;
-      S.data = d; S.signedOut=false; go("home"); toast(`Welcome to Crate, ${first(nm.value.trim())}`); render();
+      S.data = d; S.signedOut=false; go("home"); toast(`Welcome to Runlist, ${first(nm.value.trim())}`); render();
     });
   }
 }
@@ -982,7 +982,7 @@ app.addEventListener("click", e=>{
     case "overlay": if(e.target===el){ closeModal(); } break;
     case "close-modal": closeModal(el.dataset.force); break;
     case "keep-editing": S.modal=S.keep; S.keep=null; renderLayer(); break;
-    case "copy": { const url=`https://crate.app/playlists/${id}`; const done=()=>{ toast("Link copied"); renderToast(); }, fail=()=>{ toast(`Copy this link: crate.app/playlists/${id}`); renderToast(); };
+    case "copy": { const url=`https://runlist.app/playlists/${id}`; const done=()=>{ toast("Link copied"); renderToast(); }, fail=()=>{ toast(`Copy this link: runlist.app/playlists/${id}`); renderToast(); };
       try{ navigator.clipboard.writeText(url).then(done, fail); }catch(_){ fail(); } break; }
     case "undo": { const u=S.toast&&S.toast.undo; S.toast=null; if(u){ u(); render(true); } else renderToast(); break; }
     case "shuffle-songs": S.query=""; S.songs = shuffle(TRACKS.map(t=>t.id)).slice(0,20); render(true); break;
@@ -1017,7 +1017,7 @@ function applyScenario(screen, variant){
   S.query = screen==="songs" && variant==="search" ? "daft punk" : screen==="songs" && variant==="nores" ? "bowie" : "";
   const d = S.data;
   if(screen==="home" && variant==="new"){ d.favorites=[]; d.playlists=d.playlists.filter(p=>p.owner!==d.me); d.lastUsed=null; }
-  if(screen==="home" && variant==="full"){ for(let i=0;i<11;i++) d.playlists.push({id:100+i, name:["Gym Mix","Bolero Nights","Jazz Brunch","Indie Mornings","Road Trip 2","Kitchen Disco","Lullabies","Throwbacks","Summer 2026","Study","Road Trip 3"][i], owner:d.me, desc:"", tracks:[TRACKS[i].id], pad:i*3}); }
+  if(screen==="home" && variant==="full"){ for(let i=0;i<11;i++) d.playlists.push({id:100+i, name:["Gym Mix","Bolero Nights","Jazz Brunch","Indie Mornings","Road Trip 2","Kitchen Disco","Lullabies","Throwbacks","Summer 2026","Study","Road Trip 3"][i], owner:d.me, desc:"", tracks:[TRACKS[i].id], pad:i}); }
   if(screen==="discover" && variant==="full"){ d.favorites=[20,22,30,31,25]; }
   pickDiscover();
   if(screen==="playlist"){ S.viewPl = variant==="other" || variant==="out" ? 22 : variant==="private" ? 25 : 20; if(variant==="out") S.signedOut=true;
@@ -1035,9 +1035,9 @@ function syncChrome(){
   $("#c-screen").innerHTML = Object.entries(SCREENS).map(([k,v])=>`<button data-scr="${k}" aria-pressed="${k===sc}"><span class="k">${v.id}</span>${v.label}</button>`).join("");
   $("#c-var").innerHTML = Object.entries(SCREENS[sc].variants).map(([k,v])=>`<button data-var="${k}" aria-pressed="${k===S.variant}">${esc(v)}</button>`).join("");
   const n = NOTES[sc];
-  $("#notes").innerHTML = `<div><div class="eyebrow">${n.spec}</div><h2>${n.title}</h2></div><div><h3>Try this</h3><ul>${n.tries.map(t=>`<li>${t}</li>`).join("")}</ul></div><div><h3>API calls</h3>${n.api.map(a=>`<span class="api">${esc(a)}</span>`).join("")}</div><p class="spec">Product rules: 5 favorites (BR-04), 100 songs per playlist (BR-03), 20 playlists (BR-02), last used first (BR-09).</p>`;
+  $("#notes").innerHTML = `<div><div class="eyebrow">${n.spec}</div><h2>${n.title}</h2></div><div><h3>Try this</h3><ul>${n.tries.map(t=>`<li>${t}</li>`).join("")}</ul></div><div><h3>API calls</h3>${n.api.map(a=>`<span class="api">${esc(a)}</span>`).join("")}</div><p class="spec">Product rules: 5 favorites (BR-04), 20 songs per playlist (BR-03), 20 playlists (BR-02), last used first (BR-09).</p>`;
   const route = sc==="playlist" ? `/playlists/${S.viewPl}` : sc==="profile" ? `/u/${S.viewUser}` : sc==="create" ? (S.variant==="menu"?"/songs":"/") : sc==="songs" && S.query.trim().length>1 ? "/songs?q="+encodeURIComponent(S.query.trim()).replace(/%20/g,"+") : ROUTES[sc];
-  $("#url").textContent = "crate.app" + route;
+  $("#url").textContent = "runlist.app" + route;
 }
 $("#c-prop").addEventListener("click", e=>{ const b=e.target.closest("[data-prop]"); if(!b) return; S.proposal=b.dataset.prop; document.querySelectorAll("#c-prop button").forEach(x=>x.setAttribute("aria-pressed", x===b)); S.menu=null; render(true); });
 $("#c-dev").addEventListener("click", e=>{ const b=e.target.closest("[data-dev]"); if(!b) return; S.device=b.dataset.dev; document.querySelectorAll("#c-dev button").forEach(x=>x.setAttribute("aria-pressed", x===b)); $("#frame").classList.toggle("phone", S.device==="phone"); S.menu=null; render(true); });

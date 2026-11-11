@@ -64,15 +64,15 @@ This repository holds design only, with no implementation. Each layer has one so
 
 ```mermaid
 flowchart LR
-    UI["Web UI<br/>(UI-Design.md)<br/>React"] -- "HTTPS + JSON<br/>Bearer JWT" --> API["REST API /api/v1<br/>(API-Design.md)<br/>implemented in api-spring-music"]
+    UI["Web UI<br/>(UI-Design.md)<br/>React, implemented in ui-react-music"] -- "HTTPS + JSON<br/>Bearer JWT" --> API["REST API /api/v1<br/>(API-Design.md)<br/>implemented in api-spring-music"]
     API -- "SQL: tables, views,<br/>functions, triggers" --> DB[("PostgreSQL<br/>music-db<br/>(db-postgresql-music)")]
 ```
 
 | Layer | Designed in | Implemented in |
 |---|---|---|
-| Web UI | [UI-Design.md](UI-Design.md) and [ui/](ui/) | Not yet. It will be built in React. |
+| Web UI | [UI-Design.md](UI-Design.md) and [ui/](ui/) | [ui-react-music](https://github.com/oggmont/ui-react-music) (React) |
 | REST API | [API-Design.md](API-Design.md), [REQUIREMENTS.md](REQUIREMENTS.md) | [restapi-spring-music](https://github.com/oggmont/restapi-spring-music) (Spring Boot) |
-| Database | `data-model.md` in the database project; proposed changes in [DB-Design.md](DB-Design.md) | [db-postgresql-music](https://github.com/oggmont/db-postgresql-music) (the DB-Design.md changes aren't applied yet) |
+| Database | `data-model.md` in the database project; proposed changes in [DB-Design.md](DB-Design.md) | [db-postgresql-music](https://github.com/oggmont/db-postgresql-music) (PostgreSQL) |
 
 ---
 
@@ -83,7 +83,7 @@ flowchart LR
 | Rule | Limit |
 |---|---|
 | Favorite playlists per person (own and others' combined) | **5** |
-| Songs per playlist | **100** |
+| Songs per playlist | **20** |
 | Playlists a person owns | **20** |
 | Visibility | **Private** by default; a playlist is public while at least one person (its owner or anyone else) has it as a favorite |
 
@@ -195,24 +195,26 @@ The full table is in [Mapping database errors to HTTP](API-Design.md#mapping-dat
 
 - **Admin role.** Catalog writes (`/admin/…`) need a permission model the schema doesn't have yet. `is_verified` marks editorial and artist accounts, not permissions. The spec suggests adding something like `app_user.role` (`listener`, `curator`, `admin`), or loading catalog data with SQL as the seed does.
 - **Username renames.** Usernames are permanent because they appear in URLs. Allowing renames would also need redirects.
-- **API changes for the UI.** The UI's limits (5 favorites, 100 songs, 20 playlists), random songs and playlists, the last used playlist, other users' favorites, visibility that follows favorites, and richer song search are now in API-Design.md ([Changes for the web UI](API-Design.md#changes-for-the-web-ui)). Their database side is in [DB-Design.md](DB-Design.md). None of it is implemented yet, and REQUIREMENTS.md doesn't list it yet.
+- **API changes for the UI.** The UI's limits (5 favorites, 20 songs, 20 playlists), random songs and playlists, the last used playlist, other users' favorites, visibility that follows favorites, and richer song search are now in API-Design.md ([Changes for the web UI](API-Design.md#changes-for-the-web-ui)). Their database side is in [DB-Design.md](DB-Design.md). Most of it is implemented. The 20-song limit (2026-11-11) is made in the database, API and UI repos but not committed or deployed yet. REQUIREMENTS.md doesn't list these changes yet.
 - **Open UI questions.** For example, whether people should be told when a favorite they had becomes private. See [Open questions](UI-Design.md#open-questions).
 
 ---
 
 ## Related repositories
 
-This repository is the design. The database and the REST API are implemented in two other repositories:
+This repository is the design. The database, the REST API and the web UI are implemented in three other repositories:
 
 | Layer | Repository | Local clone (next to this repo) | What it owns |
 |---|---|---|---|
 | Database | [oggmont/db-postgresql-music](https://github.com/oggmont/db-postgresql-music) | `../db-postgresql-music` | The PostgreSQL schema, views, functions, triggers and seed data. |
 | REST API | [oggmont/restapi-spring-music](https://github.com/oggmont/restapi-spring-music) | `../api-spring-music` | The Spring Boot implementation of [API-Design.md](API-Design.md), and its own `auth` schema. |
+| Web UI | [oggmont/ui-react-music](https://github.com/oggmont/ui-react-music) | `../ui-react-music` | The React implementation of [UI-Design.md](UI-Design.md) and the [mockups](ui/mockups/index.html) (*Runlist*), built with Vite. It calls the REST API. |
 
 **How design changes reach them:**
-- When a design change here affects the database or the API, it comes with a **proposed change written in this repo**, where applicable:
+- When a design change here affects the database, the API or the UI, it comes with a **proposed change written in this repo**, where applicable:
   - for the database, a DB-xx section in [DB-Design.md](DB-Design.md);
-  - for the API, the contract in [API-Design.md](API-Design.md), plus a note in [REQUIREMENTS.md](REQUIREMENTS.md) where the implementation will differ until it's updated.
+  - for the API, the contract in [API-Design.md](API-Design.md), plus a note in [REQUIREMENTS.md](REQUIREMENTS.md) where the implementation will differ until it's updated;
+  - for the UI, the rules, screens and decisions in [UI-Design.md](UI-Design.md) and the [mockups](ui/mockups/index.html).
 - The other repositories are **not changed as part of a design change**; it's usually better to leave them alone. They are updated from these proposals later, on purpose.
 - Any change in those repositories (edits, migrations, commits, pull requests) needs the owner's **permission first**, each time.
 

@@ -51,12 +51,12 @@ The flow that matters most. It starts on Home ("Songs for you"), on S4 Songs (ra
 flowchart TD
     A[Tap + Add on a song] --> M[Open the add menu]
     M --> M1["Last used: the playlist I added to most recently (BR-09)"]
-    M --> M2["All playlists A–Z, each showing n/100"]
+    M --> M2["All playlists A–Z, each showing n/20"]
     M --> M3[+ New playlist]
 
     M1 --> C{Playlist state}
     M2 --> C
-    C -- "Full: 100/100" --> X1[Row disabled, says Full]
+    C -- "Full: 20/20" --> X1[Row disabled, says Full]
     C -- "Already has the song" --> X2[Row disabled, says Added]
     C -- available --> D[Optimistic: count +1, menu closes, toast 'Added to Road Trip · Undo']
     D --> E["POST /playlists/{id}/tracks with If-Match"]
