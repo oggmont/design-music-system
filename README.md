@@ -21,6 +21,7 @@ This repository holds design only, with no implementation. Each layer has one so
 - [Access rules](#access-rules)
 - [Errors](#errors)
 - [Open items](#open-items)
+- [Environments](#environments)
 - [Related repositories](#related-repositories)
 - [Related material](#related-material)
 - [Contributing](#contributing)
@@ -200,15 +201,35 @@ The full table is in [Mapping database errors to HTTP](API-Design.md#mapping-dat
 
 ---
 
+## Environments
+
+Runlist has two environments. **Use dev for everything except real use**, so prod stays inside the GCP free tier and doesn't get billed.
+
+| Environment | Where it runs | What it's for |
+|---|---|---|
+| **dev** | Docker on the owner's Mac (not GCP): the database (db-postgresql-runlist, `make up`), the API (restapi-spring-runlist, `make up`, http://localhost:8081) and the UI (ui-react-runlist, `make up`, http://localhost:5173) | Development, testing, trying changes, demos, end-to-end and load tests. Free; use it as much as you like. |
+| **prod** | GCP project `runlist-514701` (free tier): the UI at https://runlist-ui-894040023319.us-central1.run.app, the API on Cloud Run (internal only), PostgreSQL on the e2-micro VM `runlist-db` | Real use, a few sessions a week. |
+
+Rules for prod:
+
+- **Keep usage light.** Don't point tests, scripts, load tests or e2e suites at prod, and don't use it to debug. Reproduce problems in dev. Heavy traffic can push it out of the free tier: Cloud Run CPU time, outbound traffic and logs are billed beyond the free amounts.
+- **Every push to `main` of the UI or the API deploys to prod**, through the GitHub Actions workflows (pushes that only change Markdown files don't). Check changes in dev first, and group them instead of pushing many small deploys.
+- **Prod data is real.** It holds what people did in the app. Don't reset or edit it to test something; back it up before any change (db-postgresql-runlist's workflow, `backup` action).
+- A budget alert (about $1 a month) emails the billing account if prod starts costing money. It only alerts; it doesn't stop anything.
+
+This repository is documentation only and isn't deployed. The environments apply to the three implementation repositories below.
+
+---
+
 ## Related repositories
 
 This repository is the design. The database, the REST API and the web UI are implemented in three other repositories:
 
 | Layer | Repository | Local clone (next to this repo) | What it owns |
 |---|---|---|---|
-| Database | [oggmont/db-postgresql-music](https://github.com/oggmont/db-postgresql-music) | `../db-postgresql-music` | The PostgreSQL schema, views, functions, triggers and seed data. |
-| REST API | [oggmont/restapi-spring-music](https://github.com/oggmont/restapi-spring-music) | `../api-spring-music` | The Spring Boot implementation of [API-Design.md](API-Design.md), and its own `auth` schema. |
-| Web UI | [oggmont/ui-react-music](https://github.com/oggmont/ui-react-music) | `../ui-react-music` | The React implementation of [UI-Design.md](UI-Design.md) and the [mockups](ui/mockups/index.html) (*Runlist*), built with Vite. It calls the REST API. |
+| Database | [oggmont/db-postgresql-runlist](https://github.com/oggmont/db-postgresql-runlist) | `../db-postgresql-runlist` | The PostgreSQL schema, views, functions, triggers and seed data. |
+| REST API | [oggmont/restapi-spring-runlist](https://github.com/oggmont/restapi-spring-runlist) | `../restapi-spring-runlist` | The Spring Boot implementation of [API-Design.md](API-Design.md), and its own `auth` schema. |
+| Web UI | [oggmont/ui-react-runlist](https://github.com/oggmont/ui-react-runlist) | `../ui-react-runlist` | The React implementation of [UI-Design.md](UI-Design.md) and the [mockups](ui/mockups/index.html) (*Runlist*), built with Vite. It calls the REST API. |
 
 **How design changes reach them:**
 - When a design change here affects the database, the API or the UI, it comes with a **proposed change written in this repo**, where applicable:
